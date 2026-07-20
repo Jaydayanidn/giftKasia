@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For Kasia — A Gift Before You Go</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ================================================================
+       DESIGN: "Painted Letter" — an intimate, gift-wrapped experience.
+       Palette: deep evergreen, warm honey-gold, petal blush, sage.
+       Signature: opening envelope → floating petals → flip cards →
+       typewriter letter → wish lanterns.
+       ================================================================ */
+    :root {
+      --bg:         #0F1F17;
+      --bg-warm:    #1A2E22;
+      --bg-card:    #1E3529;
+      --paper:      #FBF8F1;
+      --paper-dim:  #F0EBE0;
+      --ink:        #F8F5ED;
+      --ink-soft:   #B8C4B0;
+      --sage:       #7EA889;
+      --sage-glow:  rgba(126,168,137,0.25);
+      --gold:       #D4A847;
+      --gold-soft:  #F5E6B8;
+      --gold-glow:  rgba(212,168,71,0.3);
+      --blush:      #E8C4B8;
+      --petal:      #F2D5CA;
+      --font-display: "Cormorant Garamond", Georgia, serif;
+      --font-body:    "Outfit", "Segoe UI", sans-serif;
+      --radius:     20px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.65;
+      font-size: 1.05rem;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { cursor: pointer; }
+    a:focus-visible, button:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    /* ================================================================
+       1. OPENING ENVELOPE — the first thing she sees
+       Click to "open the gift" and reveal the site.
+       ================================================================ */
+    .envelope-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: radial-gradient(ellipse at 50% 60%, #1E3529, var(--bg));
+      display: grid;
+      place-items: center;
+      transition: opacity 0.9s ease, visibility 0.9s ease;
+    }
+    .envelope-screen.is-open {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .envelope-wrap {
+      text-align: center;
+      animation: gentleFloat 3s ease-in-out infinite;
+    }
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .envelope {
+      width: 220px;
+      height: 160px;
+      margin: 0 auto 2rem;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .envelope:hover { transform: scale(1.06); }
+
+    .envelope__body {
+      width: 100%; height: 100%;
+      background: linear-gradient(145deg, var(--gold-soft), #E8D5A0);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 80px var(--gold-glow);
+    }
+    .envelope__flap {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(145deg, #EDE0B0, var(--gold-soft));
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+      transform-origin: top center;
+      transition: transform 0.6s ease;
+      z-index: 2;
+    }
+    .envelope:hover .envelope__flap {
+      transform: rotateX(30deg);
+    }
+    .envelope__heart {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      z-index: 1;
+    }
+    .envelope__seal {
+      position: absolute;
+      bottom: -12px; left: 50%;
+      transform: translateX(-50%);
+      width: 42px; height: 42px;
+      background: radial-gradient(circle, #C4433A, #9B2E28);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      color: var(--gold-soft);
+      box-shadow: 0 4px 16px rgba(156,46,40,0.5);
+      z-index: 3;
+    }
+    .envelope-label {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--gold-soft);
+      margin-bottom: 0.5rem;
+    }
+    .envelope-hint {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.12em;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* ================================================================
+       2. FLOATING PETALS — gentle ambient animation
+       ================================================================ */
+    .petals-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 50;
+      overflow: hidden;
+    }
+    .petal {
+      position: absolute;
+      width: 12px;
+      height: 16px;
+      border-radius: 80% 0 55% 50% / 55% 0 80% 50%;
+      opacity: 0;
+      top: -30px;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0%   { opacity: 0; transform: translateX(0) rotate(0deg); }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.5; }
+      100% { opacity: 0; transform: translateX(80px) rotate(360deg); top: 105vh; }
+    }
+
+    /* ================================================================
+       3. MAIN SITE CONTENT (hidden until envelope is opened)
+       ================================================================ */
+    .site { opacity: 0; transition: opacity 1s 0.3s ease; }
+    .site.is-visible { opacity: 1; }
+
+    /* ---- Shared ---- */
+    .eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+    .section {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 6rem 1.5rem;
+      position: relative;
+    }
+    .section__head {
+      max-width: 640px;
+      margin-bottom: 3.5rem;
+    }
+    .section__head--center {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+    .section__title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+      margin-bottom: 0.9rem;
+    }
+    .section__sub {
+      color: var(--ink-soft);
+      font-size: 1.05rem;
+      font-weight: 300;
+    }
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 1.5rem;
+      border: none;
+    }
+
+    /* ---- HERO ---- */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      padding: 4rem 1.5rem;
+    }
+
+    /* Glowing orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      animation: orbDrift 20s ease-in-out infinite alternate;
+    }
+    .orb--1 {
+      width: 500px; height: 500px;
+      background: var(--sage);
+      top: -15%; left: -10%;
+    }
+    .orb--2 {
+      width: 400px; height: 400px;
+      background: var(--gold);
+      bottom: -10%; right: -5%;
+      animation-duration: 28s;
+      animation-delay: -6s;
+      opacity: 0.2;
+    }
+    .orb--3 {
+      width: 300px; height: 300px;
+      background: var(--blush);
+      top: 40%; right: 20%;
+      animation-duration: 24s;
+      animation-delay: -12s;
+      opacity: 0.15;
+    }
+    @keyframes orbDrift {
+      from { transform: translate(0, 0) scale(1); }
+      to { transform: translate(40px, 30px) scale(1.15); }
+    }
+
+    .hero__inner {
+      position: relative;
+      z-index: 2;
+      max-width: 780px;
+    }
+    .hero__kicker {
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.8rem;
+    }
+    .hero__title {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(3.2rem, 10vw, 7rem);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    .hero__name {
+      display: inline-block;
+      position: relative;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--gold-soft);
+    }
+    .hero__name::after {
+      content: "";
+      position: absolute;
+      bottom: 0.03em; left: -3%;
+      width: 106%; height: 0.22em;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold), transparent);
+      border-radius: 40%;
+      opacity: 0.45;
+      animation: brushIn 1.2s 1.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    @keyframes brushIn {
+      from { transform: scaleX(0); transform-origin: left; }
+      to { transform: scaleX(1); transform-origin: left; }
+    }
+
+    .hero__lede {
+      font-size: clamp(1.05rem, 2vw, 1.22rem);
+      font-weight: 300;
+      color: var(--ink-soft);
+      max-width: 560px;
+      margin: 0 auto 3rem;
+      line-height: 1.75;
+    }
+
+    .scroll-cue {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; height: 40px; }
+      50% { opacity: 1; height: 55px; }
+    }
+
+    /* ================================================================
+       4. THE LEGEND — Flip cards (click to reveal)
+       ================================================================ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .flip-card {
+      perspective: 1000px;
+      height: 280px;
+      cursor: pointer;
+    }
+    .flip-card__inner {
+      position: relative;
+      width: 100%; height: 100%;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card.is-flipped .flip-card__inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card__front,
+    .flip-card__back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius);
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.6rem;
+    }
+
+    .flip-card__front {
+      background: var(--bg-card);
+      border: 1px solid rgba(126,168,137,0.15);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .flip-card:hover .flip-card__front {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .flip-card__icon {
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .flip-card__label {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .flip-card__tap {
+      font-size: 0.75rem;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: auto;
+      opacity: 0.7;
+    }
+
+    .flip-card__back {
+      background: linear-gradient(145deg, var(--bg-card), #253D30);
+      border: 1px solid var(--gold);
+      transform: rotateY(180deg);
+      justify-content: center;
+    }
+    .flip-card__back p {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-style: italic;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+    .flip-card__back .flip-card__tap {
+      color: var(--ink-soft);
+    }
+
+    /* ================================================================
+       5. KASIA'S WORLD — interactive hobby postcards
+       ================================================================ */
+    .world-section {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-warm) 30%, var(--bg-warm) 70%, var(--bg) 100%);
+      max-width: none;
+      padding: 6rem 1.5rem;
+    }
+    .world-section > * {
+      max-width: 1080px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .postcards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .postcard {
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--bg-card);
+      border: 1px solid rgba(126,168,137,0.1);
+      transition: transform 0.5s ease, box-shadow 0.5s ease;
+      position: relative;
+    }
+    .postcard:hover {
+      transform: translateY(-8px) rotate(0deg);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    }
+    .postcard--tilt-l { transform: rotate(-1.2deg); }
+    .postcard--tilt-r { transform: rotate(1.2deg); }
+
+    .postcard__visual {
+      height: 190px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .postcard__visual--reading {
+      background: linear-gradient(140deg, #2D4A3A, #3A5F4A, #2D4A3A);
+    }
+    .postcard__visual--nature {
+      background: linear-gradient(140deg, #1B3A2A, #2E5940, #1B4A30);
+    }
+    .postcard__visual--painting {
+      background: linear-gradient(140deg, #3A2E28, #5A4238, #3A2E28);
+    }
+
+    .postcard__emoji {
+      font-size: 3.5rem;
+      transition: transform 0.4s ease;
+    }
+    .postcard:hover .postcard__emoji {
+      transform: scale(1.15) rotate(-5deg);
+    }
+
+    .postcard__content { padding: 1.6rem; }
+    .postcard__title {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .postcard__desc {
+      font-size: 0.95rem;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+
+    /* ================================================================
+       6. PERSONAL LETTER — typewriter reveal
+       ================================================================ */
+    .letter-section {
+      text-align: center;
+    }
+    .letter-wrap {
+      max-width: 620px;
+      margin: 0 auto;
+      background: var(--paper);
+      color: #2A3A2E;
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+    }
+    .letter-wrap::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--sage), var(--gold), var(--blush));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .letter-body {
+      font-family: var(--font-display);
+      font-size: 1.18rem;
+      line-height: 1.85;
+      text-align: left;
+      color: #3A4A3E;
+    }
+    .letter-body p { margin-bottom: 1rem; }
+    .letter-body .greeting {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #2A3A2E;
+    }
+    .letter-body .signoff {
+      margin-top: 1.5rem;
+      font-style: italic;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .letter-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.1em;
+      background: var(--gold);
+      margin-left: 2px;
+      vertical-align: text-bottom;
+      animation: blink 0.8s step-end infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .letter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.9rem 2rem;
+      background: var(--bg-card);
+      color: var(--gold-soft);
+      border: 1px solid var(--gold);
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+    }
+    .letter-btn:hover {
+      background: var(--gold);
+      color: var(--bg);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px var(--gold-glow);
+    }
+
+    /* ================================================================
+       7. ONE FOR THE ROAD — quotes + books
+       ================================================================ */
+    .sendoff { text-align: center; }
+
+    .send-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 0.9rem 2rem;
+      border-radius: 999px;
+      border: 2px solid var(--sage);
+      transition: all 0.3s ease;
+      letter-spacing: 0.04em;
+    }
+    .btn:hover { transform: translateY(-3px); }
+    .btn--fill {
+      background: var(--sage);
+      color: var(--bg);
+    }
+    .btn--fill:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 8px 30px var(--gold-glow);
+    }
+    .btn--outline {
+      background: transparent;
+      color: var(--sage);
+    }
+    .btn--outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .note-card {
+      max-width: 540px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid rgba(126,168,137,0.2);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      animation: noteAppear 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .note-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--sage), var(--gold));
+    }
+    @keyframes noteAppear {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .note-card__text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 1.3rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .note-card__src {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      margin-bottom: 1.5rem;
+    }
+    .note-card__again {
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: var(--gold);
+    }
+    .note-card__again:hover { text-decoration: underline; }
+
+    /* ================================================================
+       8. WISH LANTERNS — click to send glowing lanterns
+       ================================================================ */
+    .lantern-section {
+      text-align: center;
+      min-height: 50vh;
+      position: relative;
+      overflow: hidden;
+    }
+    .lantern-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1.1rem 2.6rem;
+      background: linear-gradient(135deg, var(--gold), #C49230);
+      color: var(--bg);
+      border: none;
+      border-radius: 999px;
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 30px var(--gold-glow);
+    }
+    .lantern-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 16px 50px var(--gold-glow);
+    }
+    .lantern-btn:active { transform: scale(0.97); }
+
+    .lantern-counter {
+      margin-top: 1.2rem;
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+    }
+
+    .lantern {
+      position: absolute;
+      width: 28px;
+      height: 38px;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: radial-gradient(circle at 50% 40%, var(--gold-soft), var(--gold));
+      box-shadow: 0 0 20px var(--gold-glow), 0 0 60px rgba(212,168,71,0.15);
+      animation: floatUp 5s ease-out forwards;
+      pointer-events: none;
+    }
+    .lantern::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #FFE4A0, transparent);
+      border-radius: 50%;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      80% { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(-80vh) translateX(var(--drift)) scale(0.4); }
+    }
+
+    /* ================================================================
+       9. FLOATING HEARTS (burst on interactions)
+       ================================================================ */
+    .heart-float {
+      position: fixed;
+      pointer-events: none;
+      z-index: 60;
+      animation: heartRise 2.5s ease-out forwards;
+      font-size: 1.3rem;
+    }
+    @keyframes heartRise {
+      0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-180px) scale(0.3) rotate(30deg); }
+    }
+
+    /* ================================================================
+       10. OUTRO + FOOTER
+       ================================================================ */
+    .outro-section { text-align: center; padding-top: 2rem; }
+    .outro-border {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--sage), transparent);
+      margin: 0 auto 3rem;
+    }
+    .outro-text {
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 2.8vw, 1.6rem);
+      line-height: 1.65;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      font-weight: 400;
+    }
+    .outro-text em {
+      color: var(--gold);
+      font-weight: 600;
+    }
+    .outro-sign {
+      font-weight: 600;
+      color: var(--ink-soft);
+      letter-spacing: 0.08em;
+      font-size: 0.95rem;
+    }
+    .gift-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.4rem;
+      background: rgba(212,168,71,0.12);
+      border: 1px solid rgba(212,168,71,0.25);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--gold-soft);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem 3rem;
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      font-weight: 300;
+    }
+
+    /* ================================================================
+       11. SCROLL REVEAL
+       ================================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal--d1 { transition-delay: 0.1s; }
+    .reveal--d2 { transition-delay: 0.2s; }
+    .reveal--d3 { transition-delay: 0.3s; }
+    .reveal--d4 { transition-delay: 0.4s; }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .orb, .petal, .scroll-line { animation: none; }
+      .hero__name::after { animation: none; transform: scaleX(1); }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .envelope-wrap { animation: none; }
+      .flip-card__inner { transition-duration: 0.01s; }
+    }
+
+    @media (max-width: 600px) {
+      .section { padding: 4rem 1.25rem; }
+      .hero { min-height: 90vh; }
+      .postcard--tilt-l, .postcard--tilt-r { transform: none; }
+      .letter-wrap { padding: 2rem 1.5rem; }
+      .envelope { width: 180px; height: 130px; }
+      .flip-card { height: 260px; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== OPENING ENVELOPE ===== -->
+  <div class="envelope-screen" id="envelope-screen">
+    <div class="envelope-wrap">
+      <div class="envelope" id="envelope-btn" role="button" tabindex="0" aria-label="Open the gift">
+        <div class="envelope__body">
+          <div class="envelope__flap"></div>
+          <span class="envelope__heart">💌</span>
+          <div class="envelope__seal">K</div>
+        </div>
+      </div>
+      <p class="envelope-label">A little something for Kasia</p>
+      <p class="envelope-hint">tap to open</p>
+    </div>
+  </div>
+
+  <!-- ===== FLOATING PETALS ===== -->
+  <div class="petals-container" id="petals"></div>
+
+  <!-- ===== MAIN SITE ===== -->
+  <div class="site" id="site">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="orb orb--1" aria-hidden="true"></div>
+      <div class="orb orb--2" aria-hidden="true"></div>
+      <div class="orb orb--3" aria-hidden="true"></div>
+
+      <div class="hero__inner">
+        <p class="hero__kicker reveal">Before you go</p>
+        <h1 class="hero__title reveal reveal--d1">
+          Happy trails,<br />
+          <span class="hero__name">Kasia</span>
+        </h1>
+        <p class="hero__lede reveal reveal--d2">
+          When I joined this team, you were already there — already the
+          standard everyone else quietly tried to meet. I made you this
+          little corner of the internet, because some people shape you
+          before you even realise it, and you deserve more than a goodbye email.
+        </p>
+        <a class="scroll-cue reveal reveal--d3" href="#legend">
+          <span>Keep scrolling</span>
+          <span class="scroll-line" aria-hidden="true"></span>
+        </a>
+      </div>
+    </header>
+
+    <!-- THE LEGEND — Flip cards -->
+    <section class="section" id="legend">
+      <div class="section__head reveal">
+        <p class="eyebrow">The Legend</p>
+        <h2 class="section__title">Your Superpowers</h2>
+        <p class="section__sub">
+          Tap each card to read what I noticed — even before
+          I'd found my footing. "Legend" isn't an exaggeration — it's a job description.
+        </p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="flip-card reveal" data-hearts="true">
+          <div class="flip-card__inner">
+            <div class="flip-card__front">
+              <span class="flip-card__icon">✍️</span>
+              <span class="flip-card__label">The Writer</span>
+              <span class="flip-card__tap">tap to read →</span>
+            </div>
+            <div class="flip-card__back">
+              <p>One of the first things I noticed when I joined was your writing.
+              Every sentence fully formed — precise, warm, and more human than
+              anyone else's drafts. You didn't just set a bar, you raised mine.
+              I learned more about writing by watching you than from any course.</p>
+              <span class="flip-card__tap">tap to flip back</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flip-card reveal reveal--d1" data-hearts="true">
+          <div class="flip-card__inner">
+            <div class="flip-card__front">
+              <span class="flip-card__icon">🔍</span>
+              <span class="flip-card__label">The Researcher</span>
+              <span class="flip-card__tap">tap to read →</span>
+            </div>
+            <div class="flip-card__back">
+              <p>Early on, still finding my feet, I'd watch you unpack a hard
+              question and feel genuinely awed. A map of the whole territory —
+              sources checked, angles none of us had thought of, nuance intact.
+              You didn't just find answers; you found the truth behind them.</p>
+              <span class="flip-card__tap">tap to flip back</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flip-card reveal reveal--d2" data-hearts="true">
+          <div class="flip-card__inner">
+            <div class="flip-card__front">
+              <span class="flip-card__icon">📊</span>
+              <span class="flip-card__label">Finance &amp; Politics</span>
+              <span class="flip-card__tap">tap to read →</span>
+            </div>
+            <div class="flip-card__back">
+              <p>When I was new and still unsure what I didn't know, you were
+              the person I'd quietly check my take with before saying it out loud.
+              Markets, ministries, policy, power — you read them all like a
+              morning paper. Your instinct for what matters is genuinely rare.</p>
+              <span class="flip-card__tap">tap to flip back</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flip-card reveal reveal--d3" data-hearts="true">
+          <div class="flip-card__inner">
+            <div class="flip-card__front">
+              <span class="flip-card__icon">🤖</span>
+              <span class="flip-card__label">AI Explorer</span>
+              <span class="flip-card__tap">tap to read →</span>
+            </div>
+            <div class="flip-card__back">
+              <p>Non-tech background, fully-tech curiosity. You didn't just
+              tolerate the AI conversations — you leaned in, asked the sharpest
+              questions, and taught yourself faster than people who do this
+              for a living. Never stop being that curious.</p>
+              <span class="flip-card__tap">tap to flip back</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- KASIA'S WORLD — hobbies -->
+    <section class="world-section" id="world">
+      <div class="section__head section__head--center reveal">
+        <p class="eyebrow">Kasia's World</p>
+        <h2 class="section__title">Beyond the Office</h2>
+        <p class="section__sub">
+          The version of you that exists in quieter hours —
+          with a book, a trail, or a brush.
+        </p>
+      </div>
+
+      <div class="postcards">
+        <article class="postcard postcard--tilt-l reveal">
+          <div class="postcard__visual postcard__visual--reading">
+            <span class="postcard__emoji">📚</span>
+          </div>
+          <div class="postcard__content">
+            <h3 class="postcard__title">Always Reading</h3>
+            <p class="postcard__desc">
+              A book on the go at all times, and a recommendation ready before
+              I'd even finished asking. One of the first things you gave me
+              when I joined — a reading list. You made me a better reader
+              without even trying.
+            </p>
+          </div>
+        </article>
+
+        <article class="postcard reveal reveal--d1">
+          <div class="postcard__visual postcard__visual--nature">
+            <span class="postcard__emoji">🌿</span>
+          </div>
+          <div class="postcard__content">
+            <h3 class="postcard__title">Into the Wild</h3>
+            <p class="postcard__desc">
+              Trails, forests, mountains, coastlines — if it's green and far
+              from a meeting room, you've already planned the trip. The world
+              is lucky you walk through it so gently.
+            </p>
+          </div>
+        </article>
+
+        <article class="postcard postcard--tilt-r reveal reveal--d2">
+          <div class="postcard__visual postcard__visual--painting">
+            <span class="postcard__emoji">🎨</span>
+          </div>
+          <div class="postcard__content">
+            <h3 class="postcard__title">Painter at Heart</h3>
+            <p class="postcard__desc">
+              Brushes, color, patience. The same eye that perfects a paragraph
+              also knows exactly when a canvas is finished. Art runs through
+              everything you do.
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PERSONAL LETTER -->
+    <section class="section letter-section" id="letter">
+      <div class="section__head section__head--center reveal">
+        <p class="eyebrow">A Personal Note</p>
+        <h2 class="section__title">My Letter to You</h2>
+        <p class="section__sub">
+          Some things are better said slowly.
+        </p>
+      </div>
+
+      <div class="letter-wrap reveal reveal--d1">
+        <div class="letter-body" id="letter-body">
+          <!-- Letter is typed in by JS when the button is clicked -->
+        </div>
+        <button class="letter-btn" id="letter-start" type="button">
+          ✉️&nbsp; Read the letter
+        </button>
+      </div>
+    </section>
+
+    <!-- ONE FOR THE ROAD -->
+    <section class="section sendoff" id="sendoff">
+      <div class="section__head section__head--center reveal">
+        <p class="eyebrow">One for the Road</p>
+        <h2 class="section__title">Your Send-Off</h2>
+        <p class="section__sub">
+          You were already here filling my reading list and cheering people on
+          when I walked in on day one. Now it's my turn.
+        </p>
+      </div>
+
+      <div class="reveal reveal--d1">
+        <div class="send-buttons">
+          <button class="btn btn--fill" id="btn-motivation" type="button">✨ Daily Motivation</button>
+          <button class="btn btn--outline" id="btn-book" type="button">📖 Book Recommendation</button>
+        </div>
+        <figure class="note-card" id="note" hidden aria-live="polite">
+          <blockquote class="note-card__text" id="note-text"></blockquote>
+          <figcaption class="note-card__src" id="note-source"></figcaption>
+          <button class="note-card__again" id="btn-again" type="button">Another one →</button>
+        </figure>
+      </div>
+    </section>
+
+    <!-- WISH LANTERNS -->
+    <section class="section lantern-section" id="lanterns">
+      <div class="section__head section__head--center reveal">
+        <p class="eyebrow">Send a Wish</p>
+        <h2 class="section__title">Light a Lantern</h2>
+        <p class="section__sub">
+          Every tap sends a glowing wish into the sky for your
+          next chapter. Go on — light as many as you like.
+        </p>
+      </div>
+      <div class="reveal reveal--d1">
+        <button class="lantern-btn" id="lantern-btn" type="button">
+          🏮 Release a lantern
+        </button>
+        <p class="lantern-counter" id="lantern-counter">No lanterns yet — tap to start</p>
+      </div>
+    </section>
+
+    <!-- CLOSING -->
+    <section class="section outro-section">
+      <div class="outro-border" aria-hidden="true"></div>
+      <div class="reveal">
+        <p class="outro-text">
+          You were already a legend when I arrived. You just made it look
+          so easy I almost forgot to say thank you for it. So — thank you.
+          For every patient explanation, every generous word, and every
+          "you've got this" when I needed it most.
+          The new ministry is getting someone extraordinary —
+          <em>I knew that on my very first day.</em>
+        </p>
+        <p class="outro-sign">— With love, admiration, and gratitude</p>
+        <div class="gift-badge">🎁 Made especially for you</div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <p>Wrapped with care &amp; a little too much coffee · 2026</p>
+  </footer>
+
+  <script>
+    /* ================================================================
+       SCRIPT
+       ================================================================ */
+
+    /* ---- 1. OPENING ENVELOPE ---- */
+    const envelopeScreen = document.getElementById("envelope-screen");
+    const site = document.getElementById("site");
+
+    function openEnvelope() {
+      envelopeScreen.classList.add("is-open");
+      site.classList.add("is-visible");
+      startPetals();
+      burstHearts(window.innerWidth / 2, window.innerHeight / 2, 8);
+    }
+
+    document.getElementById("envelope-btn").addEventListener("click", openEnvelope);
+    document.getElementById("envelope-btn").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openEnvelope(); }
+    });
+
+    /* ---- 2. FLOATING PETALS ---- */
+    const petalsContainer = document.getElementById("petals");
+    const petalColors = ["#F2D5CA", "#E8C4B8", "#DCE7DD", "#F5E6B8", "#C8D8C0"];
+
+    function createPetal() {
+      const p = document.createElement("div");
+      p.className = "petal";
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.background = petalColors[Math.floor(Math.random() * petalColors.length)];
+      p.style.animationDuration = (6 + Math.random() * 8) + "s";
+      p.style.animationDelay = Math.random() * 2 + "s";
+      p.style.width = (8 + Math.random() * 10) + "px";
+      p.style.height = (10 + Math.random() * 12) + "px";
+      petalsContainer.appendChild(p);
+      setTimeout(() => p.remove(), 16000);
+    }
+
+    let petalInterval;
+    function startPetals() {
+      // Reduced motion check
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 400);
+      petalInterval = setInterval(createPetal, 2200);
+    }
+
+    /* ---- 3. FLOATING HEARTS ---- */
+    function burstHearts(x, y, count) {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      const hearts = ["💛", "🤍", "💚", "🌿", "✨"];
+      for (let i = 0; i < count; i++) {
+        const h = document.createElement("span");
+        h.className = "heart-float";
+        h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        h.style.left = (x + (Math.random() - 0.5) * 120) + "px";
+        h.style.top = (y + (Math.random() - 0.5) * 40) + "px";
+        h.style.animationDuration = (1.8 + Math.random() * 1.5) + "s";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 3500);
+      }
+    }
+
+    /* ---- 4. SCROLL REVEAL ---- */
+    const revealEls = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add("is-visible"); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      revealEls.forEach((el) => obs.observe(el));
+    } else {
+      revealEls.forEach((el) => el.classList.add("is-visible"));
+    }
+
+    /* ---- 5. FLIP CARDS ---- */
+    document.querySelectorAll(".flip-card").forEach((card) => {
+      card.addEventListener("click", function (e) {
+        this.classList.toggle("is-flipped");
+        if (this.dataset.hearts) {
+          const rect = this.getBoundingClientRect();
+          burstHearts(rect.left + rect.width / 2, rect.top + rect.height / 2, 5);
+        }
+      });
+    });
+
+    /* ---- 6. PERSONAL LETTER (typewriter) ---- */
+    const letterParagraphs = [
+      "Dear Kasia,",
+      "I've been trying to write this for days and nothing felt big enough. So I made you a whole website instead — because that's apparently what happens when someone this extraordinary leaves and you're left looking for words that measure up.",
+      "Do you remember when I first joined? You were already there — already the person everyone quietly looked to, already the standard the rest of us were trying to understand, let alone meet. I was new and a little lost, and you just... made space. You answered questions I was embarrassed to ask twice. You made me feel like I belonged before I'd done anything to earn it.",
+      "That's the thing about you, Kasia. You were never the loudest voice in the room. But somehow, you were always the most important one. Your writing? Flawless from day one. Your research? Still slightly terrifying. Your ability to hold finance, politics, and AI in the same sentence and make it all make sense? I genuinely don't know how you do that.",
+      "But the part that got me — the part I noticed before I knew your name properly — was your warmth. This quiet, steady generosity that made every room a little safer to speak in. You probably don't know how many times a small 'you've got this' from you was the thing that actually made me believe it.",
+      "I joined a team that already had you. That was one of the luckiest things that's happened to my career, even if I didn't know it yet on that first Monday morning.",
+      "The new ministry is getting someone exceptional. I hope they realise it immediately — not weeks later, like I did, but on day one. I hope your commute is short, your coffee is always the right temperature, and your new colleagues are worthy of the gift they're about to receive.",
+      "Go be legendary. You were already legend when I arrived.",
+      "— With love and enormous gratitude ❤️"
+    ];
+
+    const letterBody = document.getElementById("letter-body");
+    const letterBtn = document.getElementById("letter-start");
+    let letterStarted = false;
+
+    letterBtn.addEventListener("click", function () {
+      if (letterStarted) return;
+      letterStarted = true;
+      this.style.display = "none";
+      typeLetterParagraphs(0);
+    });
+
+    function typeLetterParagraphs(pIdx) {
+      if (pIdx >= letterParagraphs.length) return;
+
+      const p = document.createElement("p");
+      if (pIdx === 0) p.className = "greeting";
+      if (pIdx === letterParagraphs.length - 1) p.className = "signoff";
+      letterBody.appendChild(p);
+
+      const cursor = document.createElement("span");
+      cursor.className = "letter-cursor";
+      p.appendChild(cursor);
+
+      const text = letterParagraphs[pIdx];
+      let charIdx = 0;
+      const speed = pIdx === 0 ? 55 : 18; // slower for greeting
+
+      function typeChar() {
+        if (charIdx < text.length) {
+          cursor.before(document.createTextNode(text[charIdx]));
+          charIdx++;
+          // Scroll letter into view
+          p.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          setTimeout(typeChar, speed);
+        } else {
+          cursor.remove();
+          setTimeout(() => typeLetterParagraphs(pIdx + 1), 300);
+        }
+      }
+      typeChar();
+    }
+
+    /* ---- 7. QUOTES & BOOKS ---- */
+    const MOTIVATION = [
+      { text: "New ministry, same legend. Go show them how it's done.", source: "From me — obviously" },
+      { text: "You were already making people better before they even knew your name. That gift travels with you wherever you go.", source: "A truth you should carry with you" },
+      { text: "Careers are built one brave decision at a time. This is one of yours — and it's a beautiful one.", source: "The kind of thing you'd say to me" },
+      { text: "Somewhere out there is a paragraph only you can fix, a meeting only you can save, and a team that doesn't know how lucky they're about to be.", source: "An informed prediction" },
+      { text: "Keep asking the best questions in the room. It's your superpower, and it always will be.", source: "Everyone who's had the privilege of working with you" },
+      { text: "May your commute be short, your coffee strong, your deadlines reasonable, and your new colleagues worthy of you.", source: "An old colleague's blessing" },
+      { text: "Some people you meet and realise you were lucky to find them. You were already there when I arrived. That was the lucky part.", source: "Something I should have said much sooner" },
+    ];
+
+    const BOOKS = [
+      { text: "\u201CThinking, Fast and Slow\u201D by Daniel Kahneman — for the researcher who already reads people and markets this way.", source: "Because you'd annotate every single page" },
+      { text: "\u201CThe Psychology of Money\u201D by Morgan Housel — short essays on finance that read like good conversation.", source: "Finance, but make it human — your specialty" },
+      { text: "\u201CBig Magic\u201D by Elizabeth Gilbert — on living a creative life without fear. For the painter in you.", source: "For the weekend studio sessions" },
+      { text: "\u201CCo-Intelligence\u201D by Ethan Mollick — a warm, practical take on working alongside AI.", source: "For the curious technologist who keeps all of us on our toes" },
+      { text: "\u201CThe Overstory\u201D by Richard Powers — a novel about trees, patience, and people who love wild places.", source: "Pack it for the next nature trip" },
+      { text: "\u201COn Writing Well\u201D by William Zinsser — though honestly, you could have written it.", source: "Me, only half joking" },
+      { text: "\u201CRange\u201D by David Epstein — why generalists triumph in a specialized world. Remind you of anyone?", source: "Writer, researcher, painter, finance brain, AI enthusiast..." },
+    ];
+
+    const note = document.getElementById("note");
+    const noteText = document.getElementById("note-text");
+    const noteSource = document.getElementById("note-source");
+    let activeList = MOTIVATION, lastIdx = -1;
+
+    function showRandom() {
+      let i;
+      do { i = Math.floor(Math.random() * activeList.length); }
+      while (activeList.length > 1 && i === lastIdx);
+      lastIdx = i;
+      noteText.textContent = activeList[i].text;
+      noteSource.textContent = activeList[i].source;
+      note.hidden = false;
+      note.style.animation = "none";
+      void note.offsetWidth;
+      note.style.animation = "";
+      // Heart burst
+      const rect = note.getBoundingClientRect();
+      burstHearts(rect.left + rect.width / 2, rect.top, 4);
+    }
+    function activate(list) { activeList = list; lastIdx = -1; showRandom(); }
+
+    document.getElementById("btn-motivation").addEventListener("click", () => activate(MOTIVATION));
+    document.getElementById("btn-book").addEventListener("click", () => activate(BOOKS));
+    document.getElementById("btn-again").addEventListener("click", showRandom);
+
+    /* ---- 8. WISH LANTERNS ---- */
+    let lanternCount = 0;
+    const lanternBtn = document.getElementById("lantern-btn");
+    const lanternCounter = document.getElementById("lantern-counter");
+    const lanternSection = document.getElementById("lanterns");
+    const wishes = [
+      "May your first day be wonderful",
+      "Wishing you every success",
+      "May you always find inspiration",
+      "Here's to new adventures",
+      "May your creativity never stop",
+      "Wishing you joy in every chapter",
+      "May great books always find you",
+      "Here's to trails not yet walked",
+      "May your canvas always be ready",
+      "Wishing you bold, beautiful things",
+    ];
+
+    lanternBtn.addEventListener("click", function () {
+      lanternCount++;
+      const rect = lanternSection.getBoundingClientRect();
+      const lantern = document.createElement("div");
+      lantern.className = "lantern";
+      const xPos = 20 + Math.random() * 60; // % from left
+      lantern.style.left = xPos + "%";
+      lantern.style.bottom = "30%";
+      lantern.style.setProperty("--drift", (Math.random() - 0.5) * 120 + "px");
+      lanternSection.appendChild(lantern);
+      setTimeout(() => lantern.remove(), 5500);
+
+      burstHearts(
+        rect.left + rect.width * (xPos / 100),
+        rect.top + rect.height * 0.5,
+        3
+      );
+
+      const wish = wishes[Math.floor(Math.random() * wishes.length)];
+      if (lanternCount === 1) {
+        lanternCounter.textContent = `1 lantern sent — "${wish}"`;
+      } else {
+        lanternCounter.textContent = `${lanternCount} lanterns sent — "${wish}"`;
+      }
+    });
+  </script>
+</body>
+</html>
